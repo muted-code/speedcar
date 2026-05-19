@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Car, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 
@@ -21,18 +21,18 @@ export default function Navbar() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
         aria-label="Navegación principal"
       >
-        {/* Logo */}
+        {/* Logo Oficial */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
           aria-label="Speed Car — Ir al inicio"
         >
-          <div className="bg-primary p-2 rounded-xl">
-            <Car size={22} className="text-white" aria-hidden="true" />
-          </div>
-          <span className="font-extrabold text-xl tracking-tight text-text-main">
-            SPEED <span className="text-primary">CAR</span>
-          </span>
+          <img
+            src="/logo.png"
+            alt="Logo Oficial de Speed Car"
+            className="h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-300"
+            loading="eager"
+          />
         </Link>
 
         {/* Links desktop */}
