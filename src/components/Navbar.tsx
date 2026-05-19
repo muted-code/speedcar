@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Car, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,6 +54,7 @@ export default function Navbar() {
 
         {/* CTA Desktop */}
         <div className="hidden sm:flex items-center gap-3">
+          <ThemeToggle />
           <Link
             to="/vender"
             className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
@@ -84,7 +86,7 @@ export default function Navbar() {
 
       {/* Menú móvil */}
       {mobileOpen && (
-        <div className="sm:hidden border-t border-border bg-surface px-4 py-3 space-y-1">
+        <div className="sm:hidden border-t border-border bg-surface px-4 py-3 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -99,6 +101,10 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <div className="flex items-center justify-between px-4 py-2 border-t border-b border-border">
+            <span className="text-sm font-medium text-text-muted">Modo Oscuro</span>
+            <ThemeToggle />
+          </div>
           <Link
             to="/vender"
             className="block text-center btn-primary mt-2 !text-sm"

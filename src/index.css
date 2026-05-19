@@ -33,6 +33,24 @@
     --color-whatsapp-hover:142 70% 38%;
   }
 
+  .dark {
+    /* Verde esmeralda con ligeramente más luminosidad */
+    --color-primary:       160 84% 45%;
+    --color-primary-hover: 160 84% 52%;
+    --color-primary-light: 160 84% 12%;
+
+    /* Superficies: gris profundo premium */
+    --color-surface:       222 47% 11%;   /* slate-900 */
+    --color-surface-alt:   222 47% 7%;    /* slate-950 */
+
+    /* Bordes */
+    --color-border:        217 33% 17%;   /* slate-800 */
+
+    /* Texto */
+    --color-text-main:     210 40% 98%;   /* slate-50 */
+    --color-text-muted:    215 20% 65%;   /* slate-400 */
+  }
+
   *, *::before, *::after {
     border-color: hsl(var(--color-border));
   }
@@ -127,4 +145,10 @@
   /* Recorte de texto */
   .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
   .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
