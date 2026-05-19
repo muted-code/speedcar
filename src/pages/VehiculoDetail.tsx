@@ -77,8 +77,8 @@ export default function VehiculoDetail() {
             <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
               <div className="relative aspect-video bg-surface-alt group">
                 <ImageEcommerceMagnifier
-                  src={vehiculo.urls_imagenes[imgIdx]}
-                  alt={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
+                  srcOriginal={vehiculo.urls_imagenes[imgIdx]}
+                  altText={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
                 />
 
                 {total > 1 && (
