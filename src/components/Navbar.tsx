@@ -18,19 +18,25 @@ export default function Navbar() {
   return (
     <header className="bg-surface shadow-sm sticky top-0 z-50 border-b border-border">
       <nav
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between"
         aria-label="Navegación principal"
       >
-        {/* Logo Oficial */}
+        {/* Bloque de Marca */}
         <Link
           to="/"
-          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+          className="flex items-center gap-0 hover:opacity-90 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
           aria-label="Speed Car — Ir al inicio"
         >
           <img
             src="/logo.png"
-            alt="Logo Oficial de Speed Car"
-            className="h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-300"
+            alt="Emblema de Speed Car"
+            className="h-20 w-auto object-contain flex-shrink-0"
+            loading="eager"
+          />
+          <img
+            src="/words.png"
+            alt="Logotipo SPEED CAR"
+            className="h-16 w-auto object-contain flex-shrink-0 dark:invert transition-all duration-300 -ml-4"
             loading="eager"
           />
         </Link>
@@ -41,11 +47,10 @@ export default function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive(link.to)
-                  ? 'bg-primary-light text-primary'
-                  : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(link.to)
+                ? 'bg-primary-light text-primary'
+                : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
+                }`}
             >
               {link.label}
             </Link>
@@ -92,11 +97,10 @@ export default function Navbar() {
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                isActive(link.to)
-                  ? 'bg-primary-light text-primary'
-                  : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
-              }`}
+              className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive(link.to)
+                ? 'bg-primary-light text-primary'
+                : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
+                }`}
             >
               {link.label}
             </Link>
