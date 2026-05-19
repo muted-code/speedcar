@@ -43,7 +43,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
     });
   };
 
-  const Content = () => (
+  const renderContent = () => (
     <div className="space-y-6">
       {/* Encabezado Filtros */}
       <div className="flex items-center justify-between pb-4 border-b border-border">
@@ -197,7 +197,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
       {/* Versión Desktop: Sidebar fija/sticky */}
       <aside className="hidden lg:block w-[300px] flex-shrink-0">
         <div className="sticky top-24 bg-surface rounded-2xl border border-border p-6 shadow-card space-y-6">
-          <Content />
+          {renderContent()}
         </div>
       </aside>
 
@@ -231,7 +231,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
                 <X size={20} />
               </button>
             </div>
-            <Content />
+            {renderContent()}
           </div>
 
           <button
