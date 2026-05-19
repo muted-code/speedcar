@@ -1,9 +1,130 @@
+/* =====================================================
+   SPEED CAR — Sistema de diseño con variables HSL
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* --- 1. TOKENS DE COLOR (HSL) ---
+   Cambiar estos valores modifica todo el sistema de diseño */
 @layer base {
-  body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+  :root {
+    /* Verde esmeralda como color primario */
+    --color-primary:       160 84% 39%;   /* hsl → #0fa968 */
+    --color-primary-hover: 160 84% 33%;
+    --color-primary-light: 160 60% 96%;
+
+    /* Superficies */
+    --color-surface:       0 0% 100%;     /* blanco */
+    --color-surface-alt:   220 14% 96%;   /* gris muy claro */
+
+    /* Bordes */
+    --color-border:        220 13% 91%;
+
+    /* Texto */
+    --color-text-main:     220 25% 10%;   /* casi negro, alto contraste */
+    --color-text-muted:    220 9% 46%;    /* gris medio, contraste AA */
+
+    /* WhatsApp */
+    --color-whatsapp:      142 70% 45%;
+    --color-whatsapp-hover:142 70% 38%;
   }
+
+  *, *::before, *::after {
+    border-color: hsl(var(--color-border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface-alt text-text-main font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* --- 2. COMPONENTES REUTILIZABLES --- */
+@layer components {
+
+  /* Botón primario */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           bg-primary px-6 py-3 text-base font-semibold text-white
+           shadow-sm transition-all duration-200
+           hover:bg-primary-hover hover:shadow-price-badge hover:-translate-y-px
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-primary active:translate-y-0;
+  }
+
+  /* Botón de WhatsApp */
+  .btn-whatsapp {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           bg-whatsapp px-6 py-4 text-base font-bold text-white
+           shadow-lg transition-all duration-200
+           hover:bg-whatsapp-hover hover:-translate-y-px
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-whatsapp active:translate-y-0;
+  }
+
+  /* Botón secundario / outline */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           border border-primary bg-transparent px-6 py-3
+           text-base font-semibold text-primary
+           transition-all duration-200
+           hover:bg-primary-light active:translate-y-0;
+  }
+
+  /* Tarjeta base */
+  .card {
+    @apply bg-surface rounded-2xl shadow-card border border-border overflow-hidden
+           transition-all duration-300
+           hover:-translate-y-1 hover:shadow-card-hover;
+  }
+
+  /* Badge de etiqueta */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5
+           text-xs font-semibold;
+  }
+  .badge-primary {
+    @apply badge bg-primary text-white;
+  }
+  .badge-muted {
+    @apply badge bg-surface-alt text-text-muted border border-border;
+  }
+
+  /* Separador de datos técnicos */
+  .spec-row {
+    @apply flex items-center justify-between py-3 border-b border-border last:border-b-0;
+  }
+  .spec-label {
+    @apply text-sm text-text-muted;
+  }
+  .spec-value {
+    @apply text-sm font-semibold text-text-main;
+  }
+}
+
+/* --- 3. UTILIDADES EXTRA --- */
+@layer utilities {
+  /* Skeleton loader */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      hsl(220 13% 91%) 25%,
+      hsl(220 13% 96%) 50%,
+      hsl(220 13% 91%) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-lg;
+  }
+
+  /* Recorte de texto */
+  .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+  .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 }

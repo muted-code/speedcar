@@ -1,48 +1,86 @@
+import { ArrowRight, ShieldCheck, CheckCircle, Search } from 'lucide-react';
+
 export default function Hero() {
   return (
-    <div className="relative bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32 pt-16 sm:pt-24 lg:pt-32 px-4 sm:px-6 lg:px-8">
-          <main className="mx-auto max-w-7xl">
-            <div className="sm:text-center lg:text-left">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span className="block xl:inline">Vendemos tu carro en Cali</span>{' '}
-                <span className="block text-brand-600 xl:inline">más rápido y a mejor precio</span>
-              </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                Marketing premium para tu vehículo. Nos encargamos de todo el proceso, desde las fotos profesionales hasta el cierre de la venta, con total seguridad.
-              </p>
-              <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                <div className="rounded-md shadow">
-                  <a
-                    href="https://wa.me/573137148566?text=Hola,%20me%20gustar%C3%ADa%20solicitar%20corretaje%20para%20vender%20mi%20veh%C3%ADculo."
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 md:py-4 md:text-lg transition-colors"
-                  >
-                    Solicitar Corretaje
-                  </a>
+    <section aria-label="Vitrina de Vehículos" className="bg-surface relative overflow-hidden border-b border-border">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-light/30 to-transparent pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-20 relative z-10">
+          {/* Texto Hero */}
+          <div className="space-y-6 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary-light px-4 py-1.5 text-sm font-semibold text-primary">
+              <ShieldCheck size={16} aria-hidden="true" />
+              Vehículos 100% Inspeccionados y Garantizados
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-text-main leading-tight tracking-tight">
+              Encuentra tu próximo <span className="text-primary">carro ideal</span> en Cali
+            </h1>
+
+            <p className="text-lg text-text-muted max-w-lg leading-relaxed">
+              Explora nuestra selección de carros usados premium en Cali. Cada vehículo ha sido verificado exhaustivamente para que compres con total tranquilidad y seguridad.
+            </p>
+
+            {/* Beneficios rápidos en lista */}
+            <ul className="space-y-2.5 text-sm text-text-main font-medium">
+              {[
+                'Peritaje técnico y legal completo realizado.',
+                'Listos para traspaso inmediato.',
+                'Sin intermediarios costosos ni sorpresas.',
+              ].map((benefit) => (
+                <li key={benefit} className="flex items-center gap-2.5">
+                  <CheckCircle size={17} className="text-primary flex-shrink-0" aria-hidden="true" />
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <a
+                href="#vitrina"
+                className="btn-primary"
+                aria-label="Explorar vitrina de vehículos"
+              >
+                <Search size={18} aria-hidden="true" />
+                Explorar Vitrina
+              </a>
+              <a
+                href="https://wa.me/573137148566?text=Hola%2C%20estoy%20buscando%20un%20veh%C3%ADculo%20en%20Cali."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+                aria-label="Hablar con un asesor de ventas por WhatsApp"
+              >
+                Hablar con un Asesor
+                <ArrowRight size={16} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+
+          {/* Imagen Hero */}
+          <div className="relative animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+            <div className="relative rounded-3xl overflow-hidden shadow-card-hover aspect-[4/3] border border-border">
+              <img
+                src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80"
+                alt="Vehículos listos para rodar en Cali, vitrina de Speed Car"
+                className="w-full h-full object-cover animate-fade-in"
+                loading="eager"
+              />
+              <div className="absolute bottom-5 right-5 bg-surface/95 rounded-2xl shadow-card-hover px-4 py-3 flex items-center gap-3 backdrop-blur-sm border border-border">
+                <div className="bg-primary/10 p-2 rounded-xl">
+                  <span className="text-xl font-bold text-primary">Cali</span>
                 </div>
-                <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <a
-                    href="#inventario"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-brand-700 bg-brand-100 hover:bg-brand-200 md:py-4 md:text-lg transition-colors"
-                  >
-                    Ver Inventario
-                  </a>
+                <div>
+                  <p className="text-xs text-text-muted">Ubicación</p>
+                  <p className="text-sm font-bold text-text-main">Valle del Cauca</p>
                 </div>
               </div>
             </div>
-          </main>
+          </div>
         </div>
       </div>
-      <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <img
-          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-          src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2071&q=80"
-          alt="Carro de lujo en Cali"
-        />
-      </div>
-    </div>
+    </section>
   );
 }

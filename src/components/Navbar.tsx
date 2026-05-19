@@ -1,39 +1,113 @@
-import { Link } from 'react-router-dom';
-import { Car } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Car, Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+
+  const navLinks = [
+    { to: '/', label: 'Comprar (Vitrina)' },
+    { to: '/vender', label: 'Vender mi Carro' },
+  ];
+
+  const isActive = (path: string) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="bg-brand-500 text-white p-2 rounded-lg">
-                <Car size={24} />
-              </div>
-              <span className="font-bold text-xl tracking-tight text-gray-900">SPEED CAR</span>
+    <header className="bg-surface shadow-sm sticky top-0 z-50 border-b border-border">
+      <nav
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+        aria-label="Navegación principal"
+      >
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+          aria-label="Speed Car — Ir al inicio"
+        >
+          <div className="bg-primary p-2 rounded-xl">
+            <Car size={22} className="text-white" aria-hidden="true" />
+          </div>
+          <span className="font-extrabold text-xl tracking-tight text-text-main">
+            SPEED <span className="text-primary">CAR</span>
+          </span>
+        </Link>
+
+        {/* Links desktop */}
+        <div className="hidden sm:flex items-center gap-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive(link.to)
+                  ? 'bg-primary-light text-primary'
+                  : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
+              }`}
+            >
+              {link.label}
             </Link>
-          </div>
-          <div className="flex items-center">
-            <a 
-              href="https://wa.me/573137148566?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20para%20vender%20mi%20carro." 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-brand-600 font-medium hover:text-brand-700 transition-colors hidden sm:block mr-6"
-            >
-              Vende tu Carro
-            </a>
-            <a 
-              href="https://wa.me/573137148566?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20para%20vender%20mi%20carro." 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
-            >
-              Contáctanos
-            </a>
-          </div>
+          ))}
         </div>
-      </div>
-    </nav>
+
+        {/* CTA Desktop */}
+        <div className="hidden sm:flex items-center gap-3">
+          <Link
+            to="/vender"
+            className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+            aria-label="Ir a la página de vender mi carro"
+          >
+            Vende tu Carro
+          </Link>
+          <a
+            href="https://wa.me/573137148566?text=Hola%2C%20necesito%20asesor%C3%ADa%20sobre%20un%20veh%C3%ADculo."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary !py-2 !px-4 !text-sm"
+            aria-label="Contactar asesor por WhatsApp"
+          >
+            Contáctanos
+          </a>
+        </div>
+
+        {/* Botón menú móvil */}
+        <button
+          className="sm:hidden p-2 rounded-lg text-text-muted hover:bg-surface-alt transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-expanded={mobileOpen}
+          aria-label="Abrir menú de navegación"
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </nav>
+
+      {/* Menú móvil */}
+      {mobileOpen && (
+        <div className="sm:hidden border-t border-border bg-surface px-4 py-3 space-y-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMobileOpen(false)}
+              className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                isActive(link.to)
+                  ? 'bg-primary-light text-primary'
+                  : 'text-text-muted hover:text-text-main hover:bg-surface-alt'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            to="/vender"
+            className="block text-center btn-primary mt-2 !text-sm"
+            onClick={() => setMobileOpen(false)}
+          >
+            Vende tu Carro
+          </Link>
+        </div>
+      )}
+    </header>
   );
 }

@@ -1,80 +1,117 @@
 import { Link } from 'react-router-dom';
 import type { Vehiculo } from '../types';
-import { MapPin, Gauge, MessageCircle } from 'lucide-react';
+import { Gauge, MessageCircle, MapPin, Zap } from 'lucide-react';
+import clsx from 'clsx';
 
 interface Props {
   vehiculo: Vehiculo;
+  /** Índice para animación escalonada */
+  index?: number;
 }
 
-export default function TarjetaVehiculo({ vehiculo }: Props) {
-  const formatPrecio = (precio: number) => {
-    return new Intl.NumberFormat('es-CO', {
+export default function TarjetaVehiculo({ vehiculo, index = 0 }: Props) {
+  const formatPrecio = (precio: number) =>
+    new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(precio);
-  };
 
-  const whatsappMessage = `Hola, estoy interesado en el ${vehiculo.marca} ${vehiculo.modelo} año ${vehiculo.año} que vi en su página por ${formatPrecio(vehiculo.precio)}. Me gustaría agendar una cita para verlo.`;
-  const whatsappUrl = `https://wa.me/573137148566?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappMsg = encodeURIComponent(
+    `Hola, estoy interesado en el ${vehiculo.marca} ${vehiculo.modelo} año ${vehiculo.año} que vi en su página por ${formatPrecio(vehiculo.precio)}. Me gustaría agendar una cita para verlo.`
+  );
+  const whatsappUrl = `https://wa.me/573137148566?text=${whatsappMsg}`;
+
+  const imagenPrincipal = vehiculo.urls_imagenes[0] ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full group">
-      <Link to={`/vehiculo/${vehiculo.id}`} className="relative aspect-[4/3] overflow-hidden block">
-        {vehiculo.destacado && (
-          <div className="absolute top-3 left-3 bg-brand-500 text-white text-xs font-bold px-2 py-1 rounded z-10">
-            DESTACADO
-          </div>
-        )}
-        <img 
-          src={vehiculo.urls_imagenes[0]} 
-          alt={`${vehiculo.marca} ${vehiculo.modelo}`} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+    <article
+      className="card flex flex-col h-full animate-fade-in-up"
+      style={{ animationDelay: `${index * 80}ms` }}
+      aria-label={`Vehículo: ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
+    >
+      {/* ── Imagen ── */}
+      <Link
+        to={`/vehiculo/${vehiculo.id}`}
+        className="relative block aspect-video overflow-hidden bg-surface-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label={`Ver detalle de ${vehiculo.marca} ${vehiculo.modelo}`}
+        tabIndex={0}
+      >
+        <img
+          src={imagenPrincipal}
+          alt={`Fotografía de ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año} en color ${vehiculo.color}`}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
         />
-        <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
-          Placa termina en: {vehiculo.placa_final}
+
+        {/* Badges superpuestos */}
+        <div className="absolute top-3 left-3 flex gap-2">
+          {vehiculo.destacado && (
+            <span className="badge-primary flex items-center gap-1">
+              <Zap size={11} aria-hidden="true" />
+              Destacado
+            </span>
+          )}
         </div>
+        <div className="absolute bottom-3 right-3">
+          <span className="badge-muted bg-black/60 text-white border-0 backdrop-blur-sm">
+            Placa ···{vehiculo.placa_final}
+          </span>
+        </div>
+        {/* Gradiente inferior */}
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
       </Link>
-      
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="mb-2">
+
+      {/* ── Contenido ── */}
+      <div className="flex flex-col flex-grow p-5 gap-3">
+
+        {/* Encabezado */}
+        <div>
           <Link to={`/vehiculo/${vehiculo.id}`}>
-            <h3 className="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors line-clamp-1">
+            <h2 className="font-semibold text-lg text-text-main leading-snug line-clamp-1 hover:text-primary transition-colors">
               {vehiculo.marca} {vehiculo.modelo}
-            </h3>
+            </h2>
           </Link>
-          <p className="text-gray-500 text-sm">
-            {vehiculo.año} • {vehiculo.transmision}
+          <p className="text-sm text-text-muted mt-0.5">
+            {vehiculo.año} &bull; {vehiculo.transmision}
           </p>
         </div>
-        
-        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-          <div className="flex items-center gap-1">
-            <Gauge size={16} className="text-gray-400" />
+
+        {/* Especificaciones rápidas */}
+        <div className="flex items-center gap-4 text-sm text-text-muted">
+          <span className="flex items-center gap-1.5">
+            <Gauge size={15} className="text-primary flex-shrink-0" aria-hidden="true" />
             <span>{vehiculo.kilometraje.toLocaleString('es-CO')} km</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MapPin size={16} className="text-gray-400" />
-            <span>Cali</span>
-          </div>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <MapPin size={15} className="text-primary flex-shrink-0" aria-hidden="true" />
+            <span>Cali, Valle</span>
+          </span>
         </div>
-        
-        <div className="mt-auto">
-          <p className="font-extrabold text-2xl text-gray-900 mb-4">
+
+        {/* Precio + CTA */}
+        <div
+          className={clsx(
+            'mt-auto pt-3 border-t border-border flex flex-col gap-3'
+          )}
+        >
+          <p className="text-2xl font-extrabold text-text-main tracking-tight">
             {formatPrecio(vehiculo.precio)}
           </p>
-          
-          <a 
+
+          <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-3 rounded-lg font-bold transition-colors"
+            className="btn-whatsapp !py-3 w-full"
+            aria-label={`Contactar por WhatsApp sobre el ${vehiculo.marca} ${vehiculo.modelo}`}
           >
-            <MessageCircle size={20} />
+            <MessageCircle size={20} aria-hidden="true" />
             Me interesa este carro
           </a>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

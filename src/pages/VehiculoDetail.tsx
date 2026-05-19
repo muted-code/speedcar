@@ -2,189 +2,243 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Vehiculo } from '../types';
 import { mockVehiculos } from '../data/mockVehiculos';
-import { ChevronLeft, ChevronRight, ArrowLeft, CheckCircle2, MessageCircle, Info } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight, ArrowLeft,
+  CheckCircle2, MessageCircle, Gauge,
+  Palette, Settings2, Hash, MapPin, Info,
+} from 'lucide-react';
 import clsx from 'clsx';
 
 export default function VehiculoDetail() {
   const { id } = useParams<{ id: string }>();
   const [vehiculo, setVehiculo] = useState<Vehiculo | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imgIdx, setImgIdx] = useState(0);
 
   useEffect(() => {
-    // Aquí iría la llamada real a Firebase
-    const found = mockVehiculos.find(v => v.id === id);
-    setVehiculo(found || null);
-    window.scrollTo(0, 0);
+    const found = mockVehiculos.find((v) => v.id === id) ?? null;
+    setVehiculo(found);
+    setImgIdx(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id]);
 
   if (!vehiculo) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl text-gray-500">Cargando vehículo o no encontrado...</p>
+        <p className="text-text-muted text-lg">Cargando vehículo…</p>
       </div>
     );
   }
 
-  const formatPrecio = (precio: number) => {
-    return new Intl.NumberFormat('es-CO', {
+  const formatPrecio = (n: number) =>
+    new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
-      maximumFractionDigits: 0
-    }).format(precio);
-  };
+      maximumFractionDigits: 0,
+    }).format(n);
 
-  const whatsappMessage = `Hola, estoy interesado en el ${vehiculo.marca} ${vehiculo.modelo} año ${vehiculo.año} que vi en su página por ${formatPrecio(vehiculo.precio)}. Me gustaría agendar una cita para verlo.`;
-  const whatsappUrl = `https://wa.me/573137148566?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappMsg = encodeURIComponent(
+    `Hola, estoy interesado en el ${vehiculo.marca} ${vehiculo.modelo} año ${vehiculo.año} que vi en su página por ${formatPrecio(vehiculo.precio)}. Me gustaría agendar una cita para verlo.`
+  );
+  const whatsappUrl = `https://wa.me/573137148566?text=${whatsappMsg}`;
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev === vehiculo.urls_imagenes.length - 1 ? 0 : prev + 1));
-  };
+  const total = vehiculo.urls_imagenes.length;
+  const prev = () => setImgIdx((i) => (i === 0 ? total - 1 : i - 1));
+  const next = () => setImgIdx((i) => (i === total - 1 ? 0 : i + 1));
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? vehiculo.urls_imagenes.length - 1 : prev - 1));
-  };
+  const specs = [
+    { icon: Gauge,    label: 'Kilometraje',    value: `${vehiculo.kilometraje.toLocaleString('es-CO')} km` },
+    { icon: Settings2,label: 'Transmisión',    value: vehiculo.transmision },
+    { icon: Palette,  label: 'Color',          value: vehiculo.color },
+    { icon: Hash,     label: 'Placa termina en', value: vehiculo.placa_final },
+    { icon: MapPin,   label: 'Ciudad',         value: 'Cali, Valle' },
+  ];
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-24 lg:pb-12">
+    <div className="bg-surface-alt min-h-screen pb-28 lg:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link to="/" className="inline-flex items-center text-brand-600 hover:text-brand-700 font-medium mb-6 transition-colors">
-          <ArrowLeft size={20} className="mr-2" />
+
+        {/* Volver */}
+        <Link
+          to="/inventario"
+          className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary transition-colors mb-6"
+          aria-label="Volver al inventario"
+        >
+          <ArrowLeft size={17} aria-hidden="true" />
           Volver al inventario
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Columna Izquierda: Galería y Descripción */}
-          <div className="lg:col-span-2 space-y-8">
+
+          {/* ── Columna izquierda: galería + descripción ── */}
+          <div className="lg:col-span-2 space-y-6">
+
             {/* Carrusel */}
-            <div className="bg-white rounded-2xl p-2 sm:p-4 shadow-sm border border-gray-100">
-              <div className="relative aspect-[4/3] sm:aspect-video rounded-xl overflow-hidden group">
-                <img 
-                  src={vehiculo.urls_imagenes[currentImageIndex]} 
-                  alt={`${vehiculo.marca} ${vehiculo.modelo} - Vista ${currentImageIndex + 1}`}
+            <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
+              <div className="relative aspect-video bg-surface-alt group">
+                <img
+                  src={vehiculo.urls_imagenes[imgIdx]}
+                  alt={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
                   className="w-full h-full object-cover"
                 />
-                
-                {vehiculo.urls_imagenes.length > 1 && (
+
+                {total > 1 && (
                   <>
-                    <button 
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                    <button
+                      onClick={prev}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                      aria-label="Imagen anterior"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft size={22} />
                     </button>
-                    <button 
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                    <button
+                      onClick={next}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                      aria-label="Imagen siguiente"
                     >
-                      <ChevronRight size={24} />
+                      <ChevronRight size={22} />
                     </button>
                   </>
                 )}
-                
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {vehiculo.urls_imagenes.map((_, idx) => (
-                    <button 
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
+
+                {/* Indicadores */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist" aria-label="Navegación de imágenes">
+                  {vehiculo.urls_imagenes.map((_, i) => (
+                    <button
+                      key={i}
+                      role="tab"
+                      aria-selected={imgIdx === i}
+                      aria-label={`Ver imagen ${i + 1}`}
+                      onClick={() => setImgIdx(i)}
                       className={clsx(
-                        "w-2.5 h-2.5 rounded-full transition-all",
-                        currentImageIndex === idx ? "bg-white scale-125" : "bg-white/50 hover:bg-white/80"
+                        'h-1.5 rounded-full transition-all',
+                        imgIdx === i ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
                       )}
                     />
                   ))}
                 </div>
+
+                {/* Contador */}
+                <span className="absolute top-3 right-3 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  {imgIdx + 1} / {total}
+                </span>
               </div>
+
+              {/* Miniaturas */}
+              {total > 1 && (
+                <div className="flex gap-2 p-3 overflow-x-auto">
+                  {vehiculo.urls_imagenes.map((url, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setImgIdx(i)}
+                      aria-label={`Miniatura imagen ${i + 1}`}
+                      className={clsx(
+                        'flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all',
+                        imgIdx === i ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-90'
+                      )}
+                    >
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Descripción del Vendedor/Marketing */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <Info size={24} className="mr-2 text-brand-500" />
+            {/* Descripción */}
+            <div className="bg-surface rounded-2xl shadow-card border border-border p-6">
+              <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-4">
+                <Info size={20} className="text-primary" aria-hidden="true" />
                 Descripción del Vehículo
               </h2>
-              <div className="prose text-gray-600 max-w-none">
-                <p className="whitespace-pre-line leading-relaxed text-lg">
-                  {vehiculo.descripcion_marketing}
-                </p>
-              </div>
+              <p className="text-text-muted leading-relaxed whitespace-pre-line">
+                {vehiculo.descripcion_marketing}
+              </p>
             </div>
           </div>
 
-          {/* Columna Derecha: Detalles y CTA */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
-              <div className="mb-6 pb-6 border-b border-gray-100">
-                <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
+          {/* ── Columna derecha: precio + ficha + CTA ── */}
+          <aside className="space-y-5" aria-label="Información del vehículo y contacto">
+            <div className="bg-surface rounded-2xl shadow-card border border-border p-6 sticky top-24">
+
+              {/* Encabezado precio */}
+              <div className="pb-5 border-b border-border">
+                <h1 className="text-2xl font-bold text-text-main leading-snug">
                   {vehiculo.marca} {vehiculo.modelo}
                 </h1>
-                <p className="text-gray-500 text-lg">
-                  {vehiculo.año} • {vehiculo.kilometraje.toLocaleString('es-CO')} km
+                <p className="text-text-muted text-sm mt-0.5">
+                  {vehiculo.año} &bull; {vehiculo.kilometraje.toLocaleString('es-CO')} km
                 </p>
-                <div className="mt-4">
-                  <span className="text-4xl font-black text-gray-900">
-                    {formatPrecio(vehiculo.precio)}
-                  </span>
-                </div>
+                <p className="text-4xl font-black text-text-main mt-4 tracking-tight">
+                  {formatPrecio(vehiculo.precio)}
+                </p>
               </div>
 
-              {/* Ficha Técnica */}
-              <div className="space-y-4 mb-8">
-                <h3 className="font-bold text-gray-900 uppercase tracking-wider text-sm">Ficha Técnica</h3>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-500">Transmisión</p>
-                    <p className="font-semibold text-gray-900">{vehiculo.transmision}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Color</p>
-                    <p className="font-semibold text-gray-900">{vehiculo.color}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Placa termina en</p>
-                    <p className="font-semibold text-gray-900">{vehiculo.placa_final}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Ciudad</p>
-                    <p className="font-semibold text-gray-900">Cali</p>
-                  </div>
-                </div>
+              {/* Ficha técnica */}
+              <div className="py-5 border-b border-border">
+                <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
+                  Ficha Técnica
+                </h3>
+                <dl className="divide-y divide-border">
+                  {specs.map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="spec-row">
+                      <dt className="spec-label flex items-center gap-2">
+                        <Icon size={14} className="text-primary" aria-hidden="true" />
+                        {label}
+                      </dt>
+                      <dd className="spec-value">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
 
-              <div className="space-y-3 mb-8">
-                <div className="flex items-start">
-                  <CheckCircle2 size={20} className="text-brand-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-600">Inspección técnica de 150 puntos superada.</p>
-                </div>
-                <div className="flex items-start">
-                  <CheckCircle2 size={20} className="text-brand-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-600">Papeles al día, listo para traspaso.</p>
-                </div>
-              </div>
+              {/* Garantías */}
+              <ul className="py-5 space-y-2.5 border-b border-border" aria-label="Garantías del servicio">
+                {[
+                  'Inspección técnica de 150 puntos superada',
+                  'Documentos al día, listo para traspaso',
+                  'Asesoría gratuita durante toda la compra',
+                ].map((g) => (
+                  <li key={g} className="flex items-start gap-2.5 text-sm text-text-muted">
+                    <CheckCircle2 size={16} className="text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    {g}
+                  </li>
+                ))}
+              </ul>
 
-              <a 
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold text-lg transition-colors shadow-lg shadow-[#25D366]/20 hidden lg:flex"
-              >
-                <MessageCircle size={24} />
-                Contactar Asesor por WhatsApp
-              </a>
+              {/* CTA escritorio */}
+              <div className="pt-5">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-whatsapp w-full hidden lg:inline-flex"
+                  aria-label={`Contactar asesor por WhatsApp sobre el ${vehiculo.marca} ${vehiculo.modelo}`}
+                >
+                  <MessageCircle size={22} aria-hidden="true" />
+                  Contactar Asesor por WhatsApp
+                </a>
+                <p className="text-center text-xs text-text-muted mt-3 hidden lg:block">
+                  Te respondemos en menos de 5 minutos
+                </p>
+              </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
 
-      {/* Botón CTA Flotante en Celular */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 lg:hidden z-40">
-        <a 
+      {/* ── CTA Flotante Móvil ── */}
+      <div
+        className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border lg:hidden z-50 shadow-[0_-4px_20px_hsl(0_0%_0%/0.08)]"
+        role="complementary"
+        aria-label="Botón de contacto fijo"
+      >
+        <a
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-2 bg-[#25D366] active:bg-[#20bd5a] text-white py-4 rounded-xl font-bold text-lg shadow-lg"
+          className="btn-whatsapp w-full"
+          aria-label={`Contactar por WhatsApp sobre ${vehiculo.marca} ${vehiculo.modelo}`}
         >
-          <MessageCircle size={24} />
+          <MessageCircle size={22} aria-hidden="true" />
           Contactar por WhatsApp
         </a>
       </div>
