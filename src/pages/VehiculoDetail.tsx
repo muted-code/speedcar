@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Vehiculo } from '../types';
 import { mockVehiculos } from '../data/mockVehiculos';
-import ImageZoomEcommerce from '../components/ImageZoomEcommerce';
+import ImageEcommerceMagnifier from '../components/ImageEcommerceMagnifier';
 import {
   ChevronLeft, ChevronRight, ArrowLeft,
   CheckCircle2, MessageCircle, Gauge,
@@ -76,7 +76,7 @@ export default function VehiculoDetail() {
             {/* Carrusel */}
             <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
               <div className="relative aspect-video bg-surface-alt group">
-                <ImageZoomEcommerce
+                <ImageEcommerceMagnifier
                   src={vehiculo.urls_imagenes[imgIdx]}
                   alt={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
                 />
