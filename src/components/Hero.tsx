@@ -1,4 +1,6 @@
 import { ArrowRight, ShieldCheck, CheckCircle, Search } from 'lucide-react';
+import SoftBlurIn from './animations/SoftBlurIn';
+import MaskRevealUp from './animations/MaskRevealUp';
 
 export default function Hero() {
   return (
@@ -9,19 +11,31 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-20 relative z-10">
           {/* Texto Hero */}
-          <div className="space-y-6 animate-fade-in-up">
+          <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary-light px-4 py-1.5 text-sm font-semibold text-primary">
               <ShieldCheck size={16} aria-hidden="true" />
               Vehículos 100% Inspeccionados y Garantizados
             </div>
 
+            {/* soft-blur-in en el h1 */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-text-main leading-tight tracking-tight">
-              Encuentra tu próximo <span className="text-primary">carro ideal</span> en Cali
+              <SoftBlurIn
+                text="Encuentra tu próximo carro ideal en Cali"
+                as="span"
+                className="block"
+              />
             </h1>
 
-            <p className="text-lg text-text-muted max-w-lg leading-relaxed">
-              Explora nuestra selección de carros usados premium en Cali. Cada vehículo ha sido verificado exhaustivamente para que compres con total tranquilidad y seguridad.
-            </p>
+            {/* mask-reveal-up en el subtítulo por líneas */}
+            <MaskRevealUp
+              lines={[
+                'Explora nuestra selección de carros usados premium en Cali.',
+                'Cada vehículo ha sido verificado exhaustivamente para que',
+                'compres con total tranquilidad y seguridad.',
+              ]}
+              className="text-lg text-text-muted max-w-lg leading-relaxed"
+              delay={600}
+            />
 
             {/* Beneficios rápidos en lista */}
             <ul className="space-y-2.5 text-sm text-text-main font-medium">
@@ -84,3 +98,4 @@ export default function Hero() {
     </section>
   );
 }
+

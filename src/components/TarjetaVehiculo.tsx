@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Vehiculo } from '../types';
 import { Gauge, MessageCircle, MapPin, Zap } from 'lucide-react';
 import clsx from 'clsx';
+import MicroScaleFade from './animations/MicroScaleFade';
 
 interface Props {
   vehiculo: Vehiculo;
@@ -96,9 +97,11 @@ export default function TarjetaVehiculo({ vehiculo, index = 0 }: Props) {
             'mt-auto pt-3 border-t border-border flex flex-col gap-3'
           )}
         >
-          <p className="text-2xl font-extrabold text-text-main tracking-tight">
-            {formatPrecio(vehiculo.precio)}
-          </p>
+          <MicroScaleFade delay={index * 80 + 200}>
+            <p className="text-2xl font-extrabold text-text-main tracking-tight">
+              {formatPrecio(vehiculo.precio)}
+            </p>
+          </MicroScaleFade>
 
           <a
             href={whatsappUrl}
