@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Vehiculo } from '../types';
 import { mockVehiculos } from '../data/mockVehiculos';
+import ImageZoomEcommerce from '../components/ImageZoomEcommerce';
 import {
   ChevronLeft, ChevronRight, ArrowLeft,
   CheckCircle2, MessageCircle, Gauge,
@@ -59,12 +60,12 @@ export default function VehiculoDetail() {
 
         {/* Volver */}
         <Link
-          to="/inventario"
+          to="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary transition-colors mb-6"
-          aria-label="Volver al inventario"
+          aria-label="Volver al catálogo"
         >
           <ArrowLeft size={17} aria-hidden="true" />
-          Volver al inventario
+          Volver al catálogo
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -75,10 +76,9 @@ export default function VehiculoDetail() {
             {/* Carrusel */}
             <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
               <div className="relative aspect-video bg-surface-alt group">
-                <img
+                <ImageZoomEcommerce
                   src={vehiculo.urls_imagenes[imgIdx]}
                   alt={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
-                  className="w-full h-full object-cover"
                 />
 
                 {total > 1 && (
