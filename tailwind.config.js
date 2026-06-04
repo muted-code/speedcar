@@ -14,6 +14,7 @@ export default {
         'primary-light': 'hsl(var(--color-primary-light) / <alpha-value>)',
         surface: 'hsl(var(--color-surface) / <alpha-value>)',
         'surface-alt': 'hsl(var(--color-surface-alt) / <alpha-value>)',
+        'surface-inset': 'hsl(var(--color-surface-inset) / <alpha-value>)',
         border: 'hsl(var(--color-border) / <alpha-value>)',
         'text-main': 'hsl(var(--color-text-main) / <alpha-value>)',
         'text-muted': 'hsl(var(--color-text-muted) / <alpha-value>)',
@@ -22,6 +23,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
         'card': '0 1px 3px 0 hsl(0 0% 0% / 0.07), 0 1px 2px -1px hsl(0 0% 0% / 0.07)',

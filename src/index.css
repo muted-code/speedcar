@@ -1,32 +1,33 @@
 /* =====================================================
    SPEED CAR — Sistema de diseño con variables HSL
+   UI UX Pro Max & Interface Design Edition
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* --- 1. TOKENS DE COLOR (HSL) ---
-   Cambiar estos valores modifica todo el sistema de diseño */
+/* --- 1. TOKENS DE COLOR (HSL) --- */
 @layer base {
   :root {
-    /* Verde esmeralda como color primario */
-    --color-primary:       160 84% 39%;   /* hsl → #0fa968 */
-    --color-primary-hover: 160 84% 33%;
-    --color-primary-light: 160 60% 96%;
+    /* Color Primario: Caliper Green (Verde deportivo de alto rendimiento) */
+    --color-primary:       158 95% 35%;   
+    --color-primary-hover: 158 95% 28%;
+    --color-primary-light: 158 60% 95%;
 
     /* Superficies */
-    --color-surface:       0 0% 100%;     /* blanco */
-    --color-surface-alt:   220 14% 96%;   /* gris muy claro */
+    --color-surface:       0 0% 100%;     /* Blanco Puro */
+    --color-surface-alt:   215 15% 97%;   /* Gris Caleño Claro (Niebla) */
+    --color-surface-inset: 215 15% 94%;   /* Fondo para inputs "inset" */
 
     /* Bordes */
-    --color-border:        220 13% 91%;
+    --color-border:        215 15% 90%;   /* Líneas de cromo suaves */
 
     /* Texto */
-    --color-text-main:     220 25% 10%;   /* casi negro, alto contraste */
-    --color-text-muted:    220 9% 46%;    /* gris medio, contraste AA */
+    --color-text-main:     220 25% 10%;   /* Negro Carbono */
+    --color-text-muted:    220 9% 46%;    /* Gris neutro */
 
     /* WhatsApp */
     --color-whatsapp:      142 70% 45%;
@@ -34,21 +35,22 @@
   }
 
   .dark {
-    /* Verde esmeralda con ligeramente más luminosidad */
-    --color-primary:       160 84% 45%;
-    --color-primary-hover: 160 84% 52%;
-    --color-primary-light: 160 84% 12%;
+    /* Verde deportivo con mayor brillo en modo oscuro */
+    --color-primary:       158 95% 43%;
+    --color-primary-hover: 158 95% 50%;
+    --color-primary-light: 158 95% 10%;
 
-    /* Superficies: gris profundo premium */
-    --color-surface:       222 47% 11%;   /* slate-900 */
-    --color-surface-alt:   222 47% 7%;    /* slate-950 */
+    /* Superficies: Carbono/Asfalto Premium */
+    --color-surface:       224 30% 12%;   /* Fondo de tarjeta profundo */
+    --color-surface-alt:   224 30% 7%;    /* Lienzo principal */
+    --color-surface-inset: 224 30% 9%;    /* Fondo de inputs */
 
     /* Bordes */
-    --color-border:        217 33% 17%;   /* slate-800 */
+    --color-border:        224 20% 18%;   /* Cromo pulido oscuro */
 
     /* Texto */
-    --color-text-main:     210 40% 98%;   /* slate-50 */
-    --color-text-muted:    215 20% 65%;   /* slate-400 */
+    --color-text-main:     210 40% 98%;   
+    --color-text-muted:    217 15% 65%;   
   }
 
   *, *::before, *::after {
@@ -63,16 +65,27 @@
     @apply bg-surface-alt text-text-main font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+
+  /* Títulos deportivos Plus Jakarta Sans */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Fuentes Mono para datos numéricos y técnicos */
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
 }
 
 /* --- 2. COMPONENTES REUTILIZABLES --- */
 @layer components {
 
-  /* Botón primario */
+  /* Botón primario de alto rendimiento */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
-           bg-primary px-6 py-3 text-base font-semibold text-white
-           shadow-sm transition-all duration-200
+           bg-primary px-6 py-3 text-base font-bold text-white
+           shadow-md transition-all duration-200
            hover:bg-primary-hover hover:shadow-price-badge hover:-translate-y-px
            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
            focus-visible:outline-primary active:translate-y-0;
@@ -82,7 +95,7 @@
   .btn-whatsapp {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            bg-whatsapp px-6 py-4 text-base font-bold text-white
-           shadow-lg transition-all duration-200
+           shadow-md transition-all duration-200
            hover:bg-whatsapp-hover hover:-translate-y-px
            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
            focus-visible:outline-whatsapp active:translate-y-0;
@@ -92,22 +105,23 @@
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl
            border border-primary bg-transparent px-6 py-3
-           text-base font-semibold text-primary
+           text-base font-bold text-primary
            transition-all duration-200
            hover:bg-primary-light active:translate-y-0;
   }
 
-  /* Tarjeta base */
+  /* Tarjeta base con micro-interacción y bordes definidos */
   .card {
-    @apply bg-surface rounded-2xl shadow-card border border-border overflow-hidden
+    @apply bg-surface rounded-2xl border border-border/80 overflow-hidden
            transition-all duration-300
-           hover:-translate-y-1 hover:shadow-card-hover;
+           hover:-translate-y-1 hover:shadow-card-hover hover:border-primary/30;
+    box-shadow: 0 4px 20px -2px hsl(0 0% 0% / 0.02), 0 2px 6px -1px hsl(0 0% 0% / 0.02);
   }
 
   /* Badge de etiqueta */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5
-           text-xs font-semibold;
+    @apply inline-flex items-center gap-1 rounded-lg px-2.5 py-1
+           text-[10px] font-bold uppercase tracking-wider;
   }
   .badge-primary {
     @apply badge bg-primary text-white;
@@ -118,7 +132,7 @@
 
   /* Separador de datos técnicos */
   .spec-row {
-    @apply flex items-center justify-between py-3 border-b border-border last:border-b-0;
+    @apply flex items-center justify-between py-3 border-b border-border/60 last:border-b-0;
   }
   .spec-label {
     @apply text-sm text-text-muted;
@@ -134,9 +148,9 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      hsl(220 13% 91%) 25%,
-      hsl(220 13% 96%) 50%,
-      hsl(220 13% 91%) 75%
+      hsl(var(--color-surface-inset)) 25%,
+      hsl(var(--color-surface)) 50%,
+      hsl(var(--color-surface-inset)) 75%
     );
     background-size: 200% 100%;
     @apply animate-shimmer rounded-lg;

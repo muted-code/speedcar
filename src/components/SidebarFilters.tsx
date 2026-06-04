@@ -1,4 +1,5 @@
 import { X, Search, DollarSign, Calendar, Hash, RotateCcw } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export interface FiltrosState {
   busqueda: string;
@@ -50,14 +51,16 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
         <h3 className="text-base font-bold text-text-main flex items-center gap-2">
           Criterios de Búsqueda
         </h3>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onClear}
           className="text-xs font-semibold text-text-muted hover:text-primary flex items-center gap-1.5 transition-colors"
           aria-label="Limpiar todos los filtros"
         >
           <RotateCcw size={13} />
           Limpiar
-        </button>
+        </motion.button>
       </div>
 
       {/* 1. Búsqueda por Texto */}
@@ -73,7 +76,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
             value={filtros.busqueda}
             onChange={handleInputChange}
             placeholder="Ej. Mazda, Tracker..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-surface text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main placeholder:text-text-muted/70 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
           />
         </div>
       </div>
@@ -92,7 +95,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
               value={filtros.precioMin}
               onChange={handleInputChange}
               placeholder="Desde"
-              className="w-full pl-7 pr-2 py-2 rounded-xl border border-border bg-surface text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              className="w-full pl-7 pr-2 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main placeholder:text-text-muted/70 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
             />
           </div>
           <div className="relative">
@@ -103,7 +106,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
               value={filtros.precioMax}
               onChange={handleInputChange}
               placeholder="Hasta"
-              className="w-full pl-7 pr-2 py-2 rounded-xl border border-border bg-surface text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              className="w-full pl-7 pr-2 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main placeholder:text-text-muted/70 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
             />
           </div>
         </div>
@@ -120,7 +123,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
             name="anioMin"
             value={filtros.anioMin}
             onChange={handleInputChange}
-            className="w-full px-2 py-2 rounded-xl border border-border bg-surface text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-primary transition cursor-pointer"
+            className="w-full px-2 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition cursor-pointer"
             aria-label="Año mínimo"
           >
             <option value="">Desde</option>
@@ -132,7 +135,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
             name="anioMax"
             value={filtros.anioMax}
             onChange={handleInputChange}
-            className="w-full px-2 py-2 rounded-xl border border-border bg-surface text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-primary transition cursor-pointer"
+            className="w-full px-2 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition cursor-pointer"
             aria-label="Año máximo"
           >
             <option value="">Hasta</option>
@@ -152,7 +155,7 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
           name="transmision"
           value={filtros.transmision}
           onChange={handleInputChange}
-          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-primary transition cursor-pointer"
+          className="w-full px-3 py-2 rounded-xl border border-border bg-surface-inset text-sm text-text-main focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition cursor-pointer"
           aria-label="Filtrar por transmisión"
         >
           <option value="Todos">Todos</option>
@@ -172,20 +175,22 @@ export default function SidebarFilters({ filtros, setFiltros, onClear, isOpen, o
         </p>
         <div className="grid grid-cols-5 gap-1.5 pt-1">
           {Array.from({ length: 10 }, (_, i) => (
-            <button
+            <motion.button
               key={i}
               type="button"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => togglePlaca(i)}
               className={`h-9 w-full rounded-lg font-bold text-xs flex items-center justify-center transition border ${
                 filtros.placas.includes(i)
                   ? 'bg-primary text-white border-primary shadow-sm shadow-primary/25'
-                  : 'bg-surface hover:bg-surface-alt border-border text-text-main'
+                  : 'bg-surface-inset hover:bg-surface border-border text-text-main'
               }`}
               aria-pressed={filtros.placas.includes(i)}
               aria-label={`Dígito de placa ${i}`}
             >
               {i}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>

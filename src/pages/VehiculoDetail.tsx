@@ -5,15 +5,56 @@ import { mockVehiculos } from '../data/mockVehiculos';
 import ImageEcommerceMagnifier from '../components/ImageEcommerceMagnifier';
 import {
   ChevronLeft, ChevronRight, ArrowLeft,
-  CheckCircle2, MessageCircle, Gauge,
-  Palette, Settings2, Hash, MapPin, Info,
+  MessageCircle, Gauge, Palette, Settings2,
+  Hash, MapPin, Info, ShieldCheck, CheckCircle2,
+  AlertTriangle, Hammer, Wrench, ShieldAlert
 } from 'lucide-react';
 import clsx from 'clsx';
+import { motion, AnimatePresence } from 'motion/react';
+
+/**
+ * Validador Caleño de Pico y Placa en tiempo real
+ */
+function getPicoYPlacaCali(placaFinal: number) {
+  const ahora = new Date();
+  const diaSemana = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  const hora = ahora.getHours();
+  const enHorarioRestriccion = hora >= 6 && hora < 20;
+
+  const mapping: Record<number, number[]> = {
+    1: [1, 2], // Lunes
+    2: [3, 4], // Martes
+    3: [5, 6], // Miércoles
+    4: [7, 8], // Jueves
+    5: [9, 0], // Viernes
+  };
+
+  const digitosRestringidos = mapping[diaSemana] || [];
+  const aplicaHoy = digitosRestringidos.includes(placaFinal);
+  const restringidoAhora = aplicaHoy && enHorarioRestriccion;
+
+  const diasInfo = [
+    { dia: "Lunes", digitos: "1 y 2" },
+    { dia: "Martes", digitos: "3 y 4" },
+    { dia: "Miércoles", digitos: "5 y 6" },
+    { dia: "Jueves", digitos: "7 y 8" },
+    { dia: "Viernes", digitos: "9 y 0" }
+  ];
+
+  return {
+    aplicaHoy,
+    restringidoAhora,
+    diaActualNombre: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"][diaSemana],
+    diasInfo,
+    placaFinal
+  };
+}
 
 export default function VehiculoDetail() {
   const { id } = useParams<{ id: string }>();
   const [vehiculo, setVehiculo] = useState<Vehiculo | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
+  const [activePeritajeTab, setActivePeritajeTab] = useState<'motor' | 'chasis' | 'electrico' | 'legal'>('motor');
 
   useEffect(() => {
     const found = mockVehiculos.find((v) => v.id === id) ?? null;
@@ -46,13 +87,59 @@ export default function VehiculoDetail() {
   const prev = () => setImgIdx((i) => (i === 0 ? total - 1 : i - 1));
   const next = () => setImgIdx((i) => (i === total - 1 ? 0 : i + 1));
 
+  const pyPInfo = getPicoYPlacaCali(vehiculo.placa_final);
+
   const specs = [
     { icon: Gauge,    label: 'Kilometraje',    value: `${vehiculo.kilometraje.toLocaleString('es-CO')} km` },
     { icon: Settings2,label: 'Transmisión',    value: vehiculo.transmision },
     { icon: Palette,  label: 'Color',          value: vehiculo.color },
-    { icon: Hash,     label: 'Placa termina en', value: vehiculo.placa_final },
+    { icon: Hash,     label: 'Placa termina en', value: `${vehiculo.placa_final} (Cali)` },
     { icon: MapPin,   label: 'Ciudad',         value: 'Cali, Valle' },
   ];
+
+  // Detalles simulados de la inspección de 150 puntos (Peritaje 360°)
+  const peritajeSectores = {
+    motor: {
+      titulo: 'Motor y Transmisión',
+      estado: '100% Funcional',
+      detalles: [
+        'Prueba de compresión de pistones: Excelente.',
+        'Estado de fluidos y aceite: Nuevos, sin fugas.',
+        'Soportes de motor y correa de repartición: Inspeccionados.',
+        'Suavidad en cambios de marcha y embrague: Verificado.'
+      ]
+    },
+    chasis: {
+      titulo: 'Chasis y Estructura',
+      estado: 'Estructura Original',
+      detalles: [
+        'Pintura y latonería: Sin colisiones estructurales.',
+        'Compactación de chasis y amortiguación: Medición láser OK.',
+        'Desgaste de llantas: 85% de vida útil restante.',
+        'Inspección anticorrosión bajo chasis: Aprobada.'
+      ]
+    },
+    electrico: {
+      titulo: 'Sistema Eléctrico y Diagnóstico',
+      estado: 'Scanner Limpio',
+      detalles: [
+        'Lectura OBD2/Scanner: Cero códigos de falla.',
+        'Salud de la batería: 94% de capacidad activa.',
+        'Sistema de luces e infotenimiento: Completamente operativo.',
+        'Sensores y cámaras de parqueo: Calibrados.'
+      ]
+    },
+    legal: {
+      titulo: 'Documentación y Legalidad',
+      estado: 'Listo para Traspaso',
+      detalles: [
+        'Historial RUNT: Único dueño, cero comparendos pendientes.',
+        'SOAT y Tecnicomecánica: Vigentes.',
+        'Verificación de números de motor y chasis (Sijín): Limpio.',
+        'Paz y salvo de impuestos de Cali: Confirmado.'
+      ]
+    }
+  };
 
   return (
     <div className="bg-surface-alt min-h-screen pb-28 lg:pb-12">
@@ -61,7 +148,7 @@ export default function VehiculoDetail() {
         {/* Volver */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-text-muted hover:text-primary transition-colors mb-6"
           aria-label="Volver al catálogo"
         >
           <ArrowLeft size={17} aria-hidden="true" />
@@ -70,11 +157,11 @@ export default function VehiculoDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* ── Columna izquierda: galería + descripción ── */}
+          {/* ── Columna izquierda: galería + descripción + peritaje ── */}
           <div className="lg:col-span-2 space-y-6">
 
             {/* Carrusel */}
-            <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
+            <div className="bg-surface rounded-2xl shadow-sm border border-border/80 overflow-hidden">
               <div className="relative aspect-video bg-surface-alt group">
                 <ImageEcommerceMagnifier
                   srcOriginal={vehiculo.urls_imagenes[imgIdx]}
@@ -125,7 +212,7 @@ export default function VehiculoDetail() {
 
               {/* Miniaturas */}
               {total > 1 && (
-                <div className="flex gap-2 p-3 overflow-x-auto">
+                <div className="flex gap-2 p-3 overflow-x-auto border-t border-border/60 bg-surface">
                   {vehiculo.urls_imagenes.map((url, i) => (
                     <button
                       key={i}
@@ -144,82 +231,212 @@ export default function VehiculoDetail() {
             </div>
 
             {/* Descripción */}
-            <div className="bg-surface rounded-2xl shadow-card border border-border p-6">
+            <div className="bg-surface rounded-2xl shadow-sm border border-border/80 p-6">
               <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-4">
                 <Info size={20} className="text-primary" aria-hidden="true" />
                 Descripción del Vehículo
               </h2>
-              <p className="text-text-muted leading-relaxed whitespace-pre-line">
+              <p className="text-text-muted leading-relaxed whitespace-pre-line text-sm md:text-base">
                 {vehiculo.descripcion_marketing}
               </p>
             </div>
+
+            {/* Widget de Peritaje 360° (UI UX Pro Max Signature) */}
+            <div className="bg-surface rounded-2xl shadow-sm border border-border/80 p-6 space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border/65 pb-4 gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-text-main flex items-center gap-2">
+                    <ShieldCheck size={22} className="text-emerald-500 animate-pulse" aria-hidden="true" />
+                    Reporte de Peritaje Automotriz 360°
+                  </h2>
+                  <p className="text-xs text-text-muted mt-1">
+                    Inspección certificada de 150 puntos mecánicos y legales.
+                  </p>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-bold self-start md:self-auto border border-emerald-500/20">
+                  <CheckCircle2 size={14} /> Aprobación 100%
+                </div>
+              </div>
+
+              {/* Selector de pestañas táctiles */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {(['motor', 'chasis', 'electrico', 'legal'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActivePeritajeTab(tab)}
+                    className={clsx(
+                      "px-3 py-2.5 text-xs font-bold rounded-xl border transition-all flex flex-col items-center gap-1.5",
+                      activePeritajeTab === tab
+                        ? "bg-primary text-white border-primary shadow-sm"
+                        : "bg-surface-alt hover:bg-surface text-text-muted border-border/70"
+                    )}
+                  >
+                    {tab === 'motor' && <Wrench size={16} />}
+                    {tab === 'chasis' && <Hammer size={16} />}
+                    {tab === 'electrico' && <Gauge size={16} />}
+                    {tab === 'legal' && <ShieldCheck size={16} />}
+                    <span>
+                      {tab === 'motor' && 'Motor'}
+                      {tab === 'chasis' && 'Chasis'}
+                      {tab === 'electrico' && 'Eléctrico'}
+                      {tab === 'legal' && 'Legalidad'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Panel de detalles del peritaje seleccionado */}
+              <div className="bg-surface-alt border border-border/60 p-5 rounded-2xl overflow-hidden min-h-[180px] relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activePeritajeTab}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 12 }}
+                    transition={{ duration: 0.22, ease: "easeInOut" }}
+                    className="space-y-4"
+                  >
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-bold text-text-main text-sm md:text-base">
+                        {peritajeSectores[activePeritajeTab].titulo}
+                      </h3>
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                        {peritajeSectores[activePeritajeTab].estado}
+                      </span>
+                    </div>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {peritajeSectores[activePeritajeTab].detalles.map((det, index) => (
+                        <li key={index} className="flex items-start gap-2 text-xs md:text-sm text-text-muted leading-relaxed">
+                          <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                          <span>{det}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
           </div>
 
-          {/* ── Columna derecha: precio + ficha + CTA ── */}
+          {/* ── Columna derecha: precio + ficha + Pico y Placa + CTA ── */}
           <aside className="space-y-5" aria-label="Información del vehículo y contacto">
-            <div className="bg-surface rounded-2xl shadow-card border border-border p-6 sticky top-24">
+            <div className="bg-surface rounded-2xl shadow-sm border border-border/80 p-6 sticky top-24 space-y-5">
 
               {/* Encabezado precio */}
-              <div className="pb-5 border-b border-border">
-                <h1 className="text-2xl font-bold text-text-main leading-snug">
+              <div className="pb-5 border-b border-border/80 space-y-2">
+                <h1 className="text-2xl font-extrabold text-text-main leading-snug font-display">
                   {vehiculo.marca} {vehiculo.modelo}
                 </h1>
-                <p className="text-text-muted text-sm mt-0.5">
-                  {vehiculo.año} &bull; {vehiculo.kilometraje.toLocaleString('es-CO')} km
+                <p className="text-text-muted text-xs font-semibold uppercase tracking-wider">
+                  Modelo {vehiculo.año} &bull; {vehiculo.transmision}
                 </p>
-                <p className="text-4xl font-black text-text-main mt-4 tracking-tight">
-                  {formatPrecio(vehiculo.precio)}
-                </p>
+                <div className="pt-2">
+                  <p className="text-sm text-text-muted">Precio de lista</p>
+                  <p className="text-4xl font-black text-text-main font-mono tracking-tight mt-1">
+                    {formatPrecio(vehiculo.precio)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Validador Caleño de Pico y Placa */}
+              <div className="p-4 bg-surface-alt rounded-2xl border border-border/70 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldAlert size={14} className="text-primary" />
+                    Restricción Cali (Pico y Placa)
+                  </h3>
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 bg-surface border border-border/85 rounded-lg">
+                    Placa: {pyPInfo.placaFinal}
+                  </span>
+                </div>
+
+                {pyPInfo.aplicaHoy ? (
+                  <div className={clsx(
+                    "flex items-start gap-2.5 p-3 rounded-xl text-xs border leading-relaxed",
+                    pyPInfo.restringidoAhora
+                      ? "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20"
+                      : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20"
+                  )}>
+                    <AlertTriangle size={16} className="flex-shrink-0 mt-0.5 animate-bounce" />
+                    <div>
+                      <p className="font-bold">
+                        {pyPInfo.restringidoAhora ? "Restringido en Cali ahora mismo." : `Tiene restricción hoy ${pyPInfo.diaActualNombre}.`}
+                      </p>
+                      <p className="text-[10px] opacity-90 mt-1">
+                        Restricción aplica de Lunes a Viernes (6:00 AM - 8:00 PM).
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2.5 p-3 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 rounded-xl text-xs leading-relaxed">
+                    <CheckCircle2 size={16} className="flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Libre de restricción hoy ({pyPInfo.diaActualNombre}).</p>
+                      <p className="text-[10px] opacity-90 mt-1">Puedes circular por Cali con total tranquilidad.</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Calendario de Pico y Placa */}
+                <div className="border-t border-border/60 pt-2.5">
+                  <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2">Horario Semanal:</p>
+                  <div className="grid grid-cols-5 gap-1 text-[10px] text-center font-mono">
+                    {pyPInfo.diasInfo.map((d) => (
+                      <div 
+                        key={d.dia} 
+                        className={clsx(
+                          "py-1 rounded-md border",
+                          d.dia === pyPInfo.diaActualNombre
+                            ? pyPInfo.aplicaHoy 
+                              ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30 font-bold"
+                              : "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold"
+                            : "bg-surface text-text-muted border-border/50"
+                        )}
+                      >
+                        <span className="block font-semibold">{d.dia.substring(0, 2)}</span>
+                        <span className="block mt-0.5 text-[9px] opacity-80">{d.digitos}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Ficha técnica */}
-              <div className="py-5 border-b border-border">
-                <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
-                  Ficha Técnica
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                  Especificaciones Técnicas
                 </h3>
-                <dl className="divide-y divide-border">
+                <dl className="divide-y divide-border/80 border-y border-border/80">
                   {specs.map(({ icon: Icon, label, value }) => (
-                    <div key={label} className="spec-row">
-                      <dt className="spec-label flex items-center gap-2">
-                        <Icon size={14} className="text-primary" aria-hidden="true" />
+                    <div key={label} className="spec-row py-3 flex justify-between text-xs md:text-sm">
+                      <dt className="spec-label flex items-center gap-2 text-text-muted font-medium">
+                        <Icon size={14} className="text-primary flex-shrink-0" aria-hidden="true" />
                         {label}
                       </dt>
-                      <dd className="spec-value">{value}</dd>
+                      <dd className="spec-value font-bold text-text-main">{value}</dd>
                     </div>
                   ))}
                 </dl>
               </div>
 
-              {/* Garantías */}
-              <ul className="py-5 space-y-2.5 border-b border-border" aria-label="Garantías del servicio">
-                {[
-                  'Inspección técnica de 150 puntos superada',
-                  'Documentos al día, listo para traspaso',
-                  'Asesoría gratuita durante toda la compra',
-                ].map((g) => (
-                  <li key={g} className="flex items-start gap-2.5 text-sm text-text-muted">
-                    <CheckCircle2 size={16} className="text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    {g}
-                  </li>
-                ))}
-              </ul>
-
               {/* CTA escritorio */}
-              <div className="pt-5">
+              <div className="pt-2">
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-whatsapp w-full hidden lg:inline-flex"
+                  className="btn-whatsapp w-full hidden lg:inline-flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all"
                   aria-label={`Contactar asesor por WhatsApp sobre el ${vehiculo.marca} ${vehiculo.modelo}`}
                 >
-                  <MessageCircle size={22} aria-hidden="true" />
-                  Contactar Asesor por WhatsApp
+                  <MessageCircle size={20} aria-hidden="true" />
+                  Contactar por WhatsApp
                 </a>
                 <p className="text-center text-xs text-text-muted mt-3 hidden lg:block">
-                  Te respondemos en menos de 5 minutos
+                  Respuesta inmediata en menos de 5 minutos
                 </p>
               </div>
+
             </div>
           </aside>
         </div>
@@ -227,7 +444,7 @@ export default function VehiculoDetail() {
 
       {/* ── CTA Flotante Móvil ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border lg:hidden z-50 shadow-[0_-4px_20px_hsl(0_0%_0%/0.08)]"
+        className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border/80 lg:hidden z-50 shadow-[0_-4px_20px_hsl(0_0%_0%/0.08)] flex gap-3"
         role="complementary"
         aria-label="Botón de contacto fijo"
       >
@@ -235,10 +452,10 @@ export default function VehiculoDetail() {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-whatsapp w-full"
+          className="btn-whatsapp w-full flex items-center justify-center gap-2"
           aria-label={`Contactar por WhatsApp sobre ${vehiculo.marca} ${vehiculo.modelo}`}
         >
-          <MessageCircle size={22} aria-hidden="true" />
+          <MessageCircle size={20} aria-hidden="true" />
           Contactar por WhatsApp
         </a>
       </div>
