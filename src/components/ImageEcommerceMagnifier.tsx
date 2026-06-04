@@ -4,9 +4,10 @@ interface Props {
   srcOriginal: string;
   srcZoom?: string;
   altText: string;
+  onClick?: () => void;
 }
 
-export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText }: Props) {
+export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText, onClick }: Props) {
   const [showZoom, setShowZoom] = useState(false);
   const [lensPosition, setLensPosition] = useState({ x: 0, y: 0 });
   const [zoomPercent, setZoomPercent] = useState({ x: 0, y: 0 });
@@ -72,14 +73,6 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
 
   const finalZoomSrc = srcZoom || srcOriginal;
 
-  // Calculamos las posiciones del inner image para el pan effect
-  const zoomImageWidth = containerSize.width * ZOOM_FACTOR;
-  const zoomImageHeight = containerSize.height * ZOOM_FACTOR;
-  const maxScrollX = zoomImageWidth - PANEL_SIZE;
-  const maxScrollY = zoomImageHeight - PANEL_SIZE;
-  const innerLeft = -(maxScrollX * (zoomPercent.x / 100));
-  const innerTop = -(maxScrollY * (zoomPercent.y / 100));
-
   return (
     <>
       {/* Imagen principal con lente */}
@@ -89,6 +82,7 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
         onMouseEnter={() => setShowZoom(true)}
         onMouseLeave={() => setShowZoom(false)}
         onMouseMove={handleMouseMove}
+        onClick={onClick}
         aria-label={`Imagen de ${altText}. Pasa el cursor para ver detalles.`}
       >
         <img
@@ -116,7 +110,7 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
         <div
           className={`absolute bottom-3 right-3 bg-black/60 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg backdrop-blur-sm pointer-events-none transition-opacity duration-200 ${showZoom ? 'opacity-0' : 'opacity-100'}`}
         >
-          Pasa el cursor para ampliar
+          Click para abrir galería
         </div>
       </div>
 
@@ -129,17 +123,23 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
           aria-hidden="true"
         >
           <div className="relative w-full h-full">
-            <img
-              src={finalZoomSrc}
-              alt=""
-              className="absolute max-w-none object-cover"
+            <div 
+              className="absolute"
               style={{
-                width: `${zoomImageWidth}px`,
-                height: `${zoomImageHeight}px`,
-                left: `${innerLeft}px`,
-                top: `${innerTop}px`,
+                width: `${containerSize.width}px`,
+                height: `${containerSize.height}px`,
+                transform: `scale(${ZOOM_FACTOR})`,
+                transformOrigin: `${zoomPercent.x}% ${zoomPercent.y}%`,
+                left: `calc(${PANEL_SIZE / 2}px - ${containerSize.width * (zoomPercent.x / 100)}px)`,
+                top: `calc(${PANEL_SIZE / 2}px - ${containerSize.height * (zoomPercent.y / 100)}px)`,
               }}
-            />
+            >
+              <img
+                src={finalZoomSrc}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       )}

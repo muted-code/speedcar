@@ -161,6 +161,8 @@ export default function VehiculoDetail() {
     }
   };
 
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
   return (
     <div className="bg-surface-alt min-h-screen pb-28 lg:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -186,20 +188,21 @@ export default function VehiculoDetail() {
                 <ImageEcommerceMagnifier
                   srcOriginal={vehiculo.urls_imagenes[imgIdx]}
                   altText={`Vista ${imgIdx + 1} de ${total} del ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`}
+                  onClick={() => setIsLightboxOpen(true)}
                 />
 
                 {total > 1 && (
                   <>
                     <button
-                      onClick={prev}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                      onClick={(e) => { e.stopPropagation(); prev(); }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100 z-10"
                       aria-label="Imagen anterior"
                     >
                       <ChevronLeft size={22} />
                     </button>
                     <button
-                      onClick={next}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                      onClick={(e) => { e.stopPropagation(); next(); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-surface/80 hover:bg-surface backdrop-blur-sm text-text-main p-2 rounded-full shadow transition-all opacity-0 group-hover:opacity-100 focus-visible:opacity-100 z-10"
                       aria-label="Imagen siguiente"
                     >
                       <ChevronRight size={22} />
@@ -208,14 +211,14 @@ export default function VehiculoDetail() {
                 )}
 
                 {/* Indicadores */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist" aria-label="Navegación de imágenes">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10" role="tablist" aria-label="Navegación de imágenes">
                   {vehiculo.urls_imagenes.map((_, i) => (
                     <button
                       key={i}
                       role="tab"
                       aria-selected={imgIdx === i}
                       aria-label={`Ver imagen ${i + 1}`}
-                      onClick={() => setImgIdx(i)}
+                      onClick={(e) => { e.stopPropagation(); setImgIdx(i); }}
                       className={clsx(
                         'h-1.5 rounded-full transition-all',
                         imgIdx === i ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
@@ -225,7 +228,7 @@ export default function VehiculoDetail() {
                 </div>
 
                 {/* Contador */}
-                <span className="absolute top-3 right-3 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+                <span className="absolute top-3 right-3 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm z-10">
                   {imgIdx + 1} / {total}
                 </span>
               </div>
@@ -464,7 +467,7 @@ export default function VehiculoDetail() {
 
       {/* ── CTA Flotante Móvil ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border/80 lg:hidden z-50 shadow-[0_-4px_20px_hsl(0_0%_0%/0.08)] flex gap-3"
+        className="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border/80 lg:hidden z-40 shadow-[0_-4px_20px_hsl(0_0%_0%/0.08)] flex gap-3"
         role="complementary"
         aria-label="Botón de contacto fijo"
       >
@@ -479,6 +482,76 @@ export default function VehiculoDetail() {
           Contactar por WhatsApp
         </a>
       </div>
+
+      {/* ── Lightbox de Imágenes ── */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            {/* Controles de cierre */}
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-4">
+              <span className="text-white/70 font-mono text-sm">{imgIdx + 1} / {total}</span>
+              <button 
+                onClick={() => setIsLightboxOpen(false)}
+                className="text-white/70 hover:text-white p-2 rounded-full hover:bg-white/10 transition"
+              >
+                Cerrar (Esc)
+              </button>
+            </div>
+
+            {/* Imagen centrada */}
+            <div className="relative w-full h-full flex items-center justify-center max-w-7xl mx-auto p-4 md:p-12">
+              <img 
+                src={vehiculo.urls_imagenes[imgIdx]} 
+                alt="" 
+                className="max-w-full max-h-full object-contain drop-shadow-2xl"
+                onClick={(e) => e.stopPropagation()} 
+              />
+            </div>
+
+            {/* Botones de navegación gigantes */}
+            {total > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); prev(); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4 hover:bg-white/10 rounded-full transition-all"
+                >
+                  <ChevronLeft size={48} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); next(); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4 hover:bg-white/10 rounded-full transition-all"
+                >
+                  <ChevronRight size={48} />
+                </button>
+              </>
+            )}
+            
+            {/* Tira de miniaturas abajo */}
+            {total > 1 && (
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-full px-4" onClick={(e) => e.stopPropagation()}>
+                {vehiculo.urls_imagenes.map((url, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setImgIdx(i)}
+                    className={clsx(
+                      'flex-shrink-0 w-20 h-14 rounded-md overflow-hidden border-2 transition-all',
+                      imgIdx === i ? 'border-primary' : 'border-transparent opacity-50 hover:opacity-100'
+                    )}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
