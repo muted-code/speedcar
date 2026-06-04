@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Vender from './pages/Vender';
 import VehiculoDetail from './pages/VehiculoDetail';
 
+import AdminUpload from './pages/AdminUpload';
+
 function App() {
   return (
     <Router>
@@ -14,6 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/vender" element={<Vender />} />
             <Route path="/vehiculo/:id" element={<VehiculoDetail />} />
+            <Route path="/admin/upload" element={<AdminUpload />} />
           </Routes>
         </div>
         <footer className="bg-surface border-t border-border mt-auto py-6 text-center text-text-muted text-sm">
