@@ -57,10 +57,30 @@ export default function VehiculoDetail() {
   const [activePeritajeTab, setActivePeritajeTab] = useState<'motor' | 'chasis' | 'electrico' | 'legal'>('motor');
 
   useEffect(() => {
-    const found = mockVehiculos.find((v) => v.id === id) ?? null;
-    setVehiculo(found);
-    setImgIdx(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const fetchVehiculo = async () => {
+      try {
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+        const res = await fetch(`${BACKEND_URL}/api/vehiculos/${id}`);
+        
+        if (res.ok) {
+          const data = await res.json();
+          setVehiculo(data);
+        } else {
+          // Fallback a mockVehiculos si falla el backend (solo para no romper el desarrollo)
+          const found = mockVehiculos.find((v) => v.id === id) ?? null;
+          setVehiculo(found);
+        }
+      } catch (err) {
+        console.error("Error obteniendo el vehículo del backend:", err);
+        const found = mockVehiculos.find((v) => v.id === id) ?? null;
+        setVehiculo(found);
+      } finally {
+        setImgIdx(0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    
+    fetchVehiculo();
   }, [id]);
 
   if (!vehiculo) {
