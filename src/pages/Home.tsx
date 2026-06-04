@@ -51,6 +51,7 @@ export default function Home() {
     setIsSemanticActive(true);
     setSearchQuery(query);
 
+    try {
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
       const res = await fetch(`${BACKEND_URL}/api/search`, {
         method: "POST",
