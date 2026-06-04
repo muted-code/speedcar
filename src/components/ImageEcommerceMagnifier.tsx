@@ -9,7 +9,8 @@ interface Props {
 export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText }: Props) {
   const [showZoom, setShowZoom] = useState(false);
   const [lensPosition, setLensPosition] = useState({ x: 0, y: 0 });
-  const [zoomBgPos, setZoomBgPos] = useState('0% 0%');
+  const [zoomPercent, setZoomPercent] = useState({ x: 0, y: 0 });
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [zoomPanelStyle, setZoomPanelStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +23,8 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
   useEffect(() => {
     const updatePanelPosition = () => {
       if (!containerRef.current) return;
-      const { right, top } = containerRef.current.getBoundingClientRect();
+      const { right, top, width, height } = containerRef.current.getBoundingClientRect();
+      setContainerSize({ width, height });
       setZoomPanelStyle({
         position: 'fixed',
         left: `${right + 16}px`,
@@ -45,6 +47,11 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+    
+    // Solo actualizar tamaño si cambia
+    if (containerSize.width !== width || containerSize.height !== height) {
+      setContainerSize({ width, height });
+    }
 
     let x = e.clientX - left;
     let y = e.clientY - top;
@@ -57,13 +64,21 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
 
     setLensPosition({ x: x - LENS_W / 2, y: y - LENS_H / 2 });
 
-    // Calcular % de posición para el fondo del panel de zoom
+    // Calcular % de posición
     const percentX = ((x - LENS_W / 2) / (width - LENS_W)) * 100;
     const percentY = ((y - LENS_H / 2) / (height - LENS_H)) * 100;
-    setZoomBgPos(`${percentX}% ${percentY}%`);
+    setZoomPercent({ x: percentX, y: percentY });
   };
 
   const finalZoomSrc = srcZoom || srcOriginal;
+
+  // Calculamos las posiciones del inner image para el pan effect
+  const zoomImageWidth = containerSize.width * ZOOM_FACTOR;
+  const zoomImageHeight = containerSize.height * ZOOM_FACTOR;
+  const maxScrollX = zoomImageWidth - PANEL_SIZE;
+  const maxScrollY = zoomImageHeight - PANEL_SIZE;
+  const innerLeft = -(maxScrollX * (zoomPercent.x / 100));
+  const innerTop = -(maxScrollY * (zoomPercent.y / 100));
 
   return (
     <>
@@ -106,21 +121,26 @@ export default function ImageEcommerceMagnifier({ srcOriginal, srcZoom, altText 
       </div>
 
       {/* Panel de zoom: usa fixed para escapar de cualquier overflow-hidden padre */}
-      {showZoom && (
+      {showZoom && containerSize.width > 0 && (
         <div
           className="hidden lg:block rounded-2xl border-2 border-border shadow-2xl bg-surface overflow-hidden animate-fade-in"
           style={zoomPanelStyle}
           role="presentation"
           aria-hidden="true"
         >
-          <div
-            className="w-full h-full bg-no-repeat"
-            style={{
-              backgroundImage: `url(${finalZoomSrc})`,
-              backgroundSize: `${ZOOM_FACTOR * 100}% ${ZOOM_FACTOR * 100}%`,
-              backgroundPosition: zoomBgPos,
-            }}
-          />
+          <div className="relative w-full h-full">
+            <img
+              src={finalZoomSrc}
+              alt=""
+              className="absolute max-w-none object-cover"
+              style={{
+                width: `${zoomImageWidth}px`,
+                height: `${zoomImageHeight}px`,
+                left: `${innerLeft}px`,
+                top: `${innerTop}px`,
+              }}
+            />
+          </div>
         </div>
       )}
     </>
