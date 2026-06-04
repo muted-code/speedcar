@@ -29,12 +29,24 @@ export default function Home() {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [isSemanticActive, setIsSemanticActive] = useState(false);
 
-  // Cargar vehículos iniciales ordenando destacados primero
+  // Cargar vehículos iniciales desde el backend
   useEffect(() => {
-    const sorted = [...mockVehiculos].sort(
-      (a, b) => Number(b.destacado) - Number(a.destacado)
-    );
-    setVehiculos(sorted);
+    const fetchVehiculos = async () => {
+      try {
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+        const res = await fetch(`${BACKEND_URL}/api/vehiculos`);
+        if (!res.ok) throw new Error('Error al cargar vehículos');
+        const data = await res.json();
+        setVehiculos(data);
+      } catch (err) {
+        console.error("Error cargando desde el backend, usando mock data:", err);
+        const sorted = [...mockVehiculos].sort(
+          (a, b) => Number(b.destacado) - Number(a.destacado)
+        );
+        setVehiculos(sorted);
+      }
+    };
+    fetchVehiculos();
   }, []);
 
   const handleClearFilters = () => {
@@ -72,7 +84,7 @@ export default function Home() {
       
       // Fallback local: buscador básico de coincidencia de texto en campos de marketing y ficha
       const term = query.toLowerCase().trim();
-      const localResults = mockVehiculos.filter((v) => {
+      const localResults = vehiculos.filter((v) => {
         const textToMatch = `${v.marca} ${v.modelo} ${v.año} ${v.color} ${v.transmision} ${v.descripcion_marketing}`.toLowerCase();
         
         // Comprobar coincidencia de palabras clave
@@ -91,9 +103,24 @@ export default function Home() {
   };
 
   // Limpiar Búsqueda Semántica
-  const handleClearSemantic = () => {
+  const handleClearSemantic = async () => {
     setIsSemanticActive(false);
     setSearchQuery("");
+    
+    // Volver a cargar la lista completa desde el backend
+    try {
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const res = await fetch(`${BACKEND_URL}/api/vehiculos`);
+      if (res.ok) {
+        const data = await res.json();
+        setVehiculos(data);
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Fallback si falla
     const sorted = [...mockVehiculos].sort(
       (a, b) => Number(b.destacado) - Number(a.destacado)
     );
