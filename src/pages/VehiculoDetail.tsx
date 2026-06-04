@@ -55,6 +55,7 @@ export default function VehiculoDetail() {
   const [vehiculo, setVehiculo] = useState<Vehiculo | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [activePeritajeTab, setActivePeritajeTab] = useState<'motor' | 'chasis' | 'electrico' | 'legal'>('motor');
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     const fetchVehiculo = async () => {
@@ -160,8 +161,6 @@ export default function VehiculoDetail() {
       ]
     }
   };
-
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   return (
     <div className="bg-surface-alt min-h-screen pb-28 lg:pb-12">
