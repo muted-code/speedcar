@@ -21,7 +21,7 @@ export default function LatestCreations({ vehiculos }: Props) {
     }).format(n);
 
   return (
-    <section className="py-16 font-['Poppins']">
+    <section className="hidden md:block py-16 font-['Poppins']">
       <h2 className="text-3xl font-semibold text-center text-text-main mx-auto">
         Vehículos Destacados
       </h2>
