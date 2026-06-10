@@ -74,6 +74,37 @@ export default function AdminUpload() {
       return;
     }
 
+    // Validación estricta de datos obligatorios
+    if (!formData.marca.trim() || !formData.modelo.trim() || !formData.color.trim() || !formData.transmision) {
+      setError('Faltan datos obligatorios: Asegúrate de llenar Marca, Modelo, Color y Transmisión.');
+      return;
+    }
+
+    const precioNum = Number(formData.precio);
+    const kmNum = Number(formData.kilometraje);
+    const añoNum = Number(formData.año);
+    const placaNum = Number(formData.placa_final);
+
+    if (!formData.precio || isNaN(precioNum) || precioNum <= 0) {
+      setError('El Precio es inválido. Debe ser un número mayor a 0 sin puntos ni comas.');
+      return;
+    }
+    
+    if (formData.kilometraje === '' || isNaN(kmNum) || kmNum < 0) {
+      setError('El Kilometraje es inválido. Debe ser un número mayor o igual a 0.');
+      return;
+    }
+
+    if (!formData.año || isNaN(añoNum) || añoNum < 1900 || añoNum > 2050) {
+      setError('El Año es inválido.');
+      return;
+    }
+
+    if (formData.placa_final === '' || isNaN(placaNum) || placaNum < 0 || placaNum > 9) {
+      setError('La Placa Final debe ser un número del 0 al 9.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
