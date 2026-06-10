@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
+import LatestCreations from '../components/LatestCreations';
 import TarjetaVehiculo from '../components/TarjetaVehiculo';
 import SidebarFilters from '../components/SidebarFilters';
 import type { FiltrosState } from '../components/SidebarFilters';
@@ -163,6 +164,7 @@ export default function Home() {
   return (
     <main className="bg-surface-alt min-h-screen pb-16">
       <Hero />
+      <LatestCreations />
 
       {/* ── Sección de Catálogo ── */}
       <section id="vitrina" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
