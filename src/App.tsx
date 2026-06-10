@@ -7,6 +7,7 @@ import Home from './pages/Home';
 const Vender = lazy(() => import('./pages/Vender'));
 const VehiculoDetail = lazy(() => import('./pages/VehiculoDetail'));
 const AdminUpload = lazy(() => import('./pages/AdminUpload'));
+const Vitrina = lazy(() => import('./pages/Vitrina'));
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-text-muted">Cargando...</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/comprar" element={<Vitrina />} />
               <Route path="/vender" element={<Vender />} />
               <Route path="/vehiculo/:id" element={<VehiculoDetail />} />
               <Route path="/admin/upload" element={<AdminUpload />} />

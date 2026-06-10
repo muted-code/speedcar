@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Search } from 'lucide-react';
 import SoftBlurIn from './animations/SoftBlurIn';
 import MaskRevealUp from './animations/MaskRevealUp';
@@ -89,14 +90,14 @@ export default function Hero() {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 pt-3">
-              <a href="#vitrina" className="btn-primary shadow-lg shadow-primary/20 !px-7 !py-3.5 text-sm hover:scale-[1.01] active:scale-[0.99] transition-all">
-                <Search size={16} />
+            <div className="flex flex-col sm:flex-row gap-4 pt-5">
+              <Link to="/comprar" className="btn-primary shadow-xl shadow-primary/30 !px-10 !py-4 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <Search size={20} />
                 Explorar Vitrina
-              </a>
-              <a href="https://wa.me/573137148566?text=Hola" target="_blank" rel="noopener noreferrer" className="btn-secondary !px-7 !py-3.5 text-sm hover:scale-[1.01] active:scale-[0.99] transition-all backdrop-blur-xs bg-surface/30">
+              </Link>
+              <a href="https://wa.me/573137148566?text=Hola" target="_blank" rel="noopener noreferrer" className="btn-secondary !px-8 !py-4 text-base font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all backdrop-blur-xs bg-surface/30">
                 Hablar con un Asesor
-                <ArrowRight size={15} />
+                <ArrowRight size={18} />
               </a>
             </div>
           </div>

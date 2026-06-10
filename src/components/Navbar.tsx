@@ -8,7 +8,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const navLinks = [
-    { to: '/', label: 'Comprar (Vitrina)' },
+    { to: '/', label: 'Inicio' },
+    { to: '/comprar', label: 'Comprar (Vitrina)' },
     { to: '/vender', label: 'Vender mi Carro' },
   ];
 
