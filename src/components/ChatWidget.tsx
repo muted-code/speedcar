@@ -82,7 +82,7 @@ export default function ChatWidget() {
 
       {/* Ventana de Chat */}
       <div 
-        className={`fixed bottom-6 right-6 z-50 w-[350px] max-w-[calc(100vw-32px)] sm:w-[400px] h-[500px] max-h-[calc(100vh-100px)] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-6 right-6 z-50 w-[350px] max-w-[calc(100vw-32px)] sm:w-[420px] h-[600px] max-h-[calc(100vh-100px)] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
         <div className="bg-surface-alt border-b border-border p-4 flex items-center justify-between">
@@ -124,27 +124,38 @@ export default function ChatWidget() {
                 </div>
                 
                 {msg.vehiculos && msg.vehiculos.length > 0 && (
-                  <div className="flex flex-col gap-2 mt-1 w-[85%]">
+                  <div className="flex flex-col gap-3 mt-2 w-full items-start">
                     {msg.vehiculos.map(v => (
-                      <Link 
+                      <div 
                         key={v.id} 
-                        to={`/vehiculo/${v.id}`}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-3 bg-surface border border-border p-2 rounded-xl hover:border-primary/50 transition-colors group shadow-sm"
+                        className="p-3.5 bg-surface border border-border hover:-translate-y-1 transition duration-300 rounded-xl shadow-sm w-[260px] sm:w-[280px]"
                       >
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-alt">
-                          {v.urls_imagenes && v.urls_imagenes.length > 0 ? (
-                            <img src={v.urls_imagenes[0]} alt={v.modelo} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">Sin foto</div>
-                          )}
-                        </div>
-                        <div className="flex flex-col justify-center overflow-hidden">
-                          <p className="text-sm font-bold text-text-main truncate leading-tight group-hover:text-primary transition-colors">{v.marca} {v.modelo}</p>
-                          <p className="text-[11px] text-text-muted truncate mt-0.5">{v.año} • {v.kilometraje?.toLocaleString() || 0} km</p>
-                          <p className="text-xs font-bold text-primary mt-1">${(v.precio || 0).toLocaleString()} COP</p>
-                        </div>
-                      </Link>
+                        {v.urls_imagenes && v.urls_imagenes.length > 0 ? (
+                          <img className="rounded-lg h-36 w-full object-cover" src={v.urls_imagenes[0]} alt={v.modelo} />
+                        ) : (
+                          <div className="rounded-lg h-36 w-full bg-surface-alt flex items-center justify-center text-text-muted text-xs">Sin foto</div>
+                        )}
+                        
+                        <p className="text-text-main text-lg font-bold mt-3 leading-tight truncate">
+                          {v.marca} {v.modelo}
+                        </p>
+                        
+                        <p className="text-text-muted text-xs mt-1">
+                          {v.año} • {v.kilometraje?.toLocaleString() || 0} km
+                        </p>
+                        
+                        <p className="text-primary font-bold text-lg mt-1">
+                          ${(v.precio || 0).toLocaleString()} COP
+                        </p>
+                        
+                        <Link 
+                          to={`/vehiculo/${v.id}`}
+                          onClick={() => setIsOpen(false)}
+                          className="bg-primary hover:bg-opacity-90 transition cursor-pointer mt-3 w-full py-2 font-bold rounded-lg text-white text-sm block text-center"
+                        >
+                          Ver Vehículo
+                        </Link>
+                      </div>
                     ))}
                   </div>
                 )}
