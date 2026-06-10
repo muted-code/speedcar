@@ -1,34 +1,54 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Search } from 'lucide-react';
 import SoftBlurIn from './animations/SoftBlurIn';
 import MaskRevealUp from './animations/MaskRevealUp';
+import type { Vehiculo } from '../types';
 
-export default function Hero() {
+interface Props {
+  vehiculos?: Vehiculo[];
+}
+
+export default function Hero({ vehiculos = [] }: Props) {
   const [stopScroll, setStopScroll] = useState(false);
+  const navigate = useNavigate();
 
-  const cardData = [
+  const defaultCardData: Array<{ id?: string, title: string, image: string }> = [
     {
+      id: undefined,
       title: "Deportivos de Alta Gama",
       image: "https://images.unsplash.com/photo-1503376760367-11ea8eb222c9?q=80&w=600&h=800&auto=format&fit=crop",
     },
     {
+      id: undefined,
       title: "SUVs Imponentes",
       image: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?q=80&w=600&h=800&auto=format&fit=crop",
     },
     {
+      id: undefined,
       title: "Sedanes Ejecutivos",
       image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=600&h=800&auto=format&fit=crop",
     },
     {
+      id: undefined,
       title: "Clásicos Modernos",
       image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=600&h=800&auto=format&fit=crop",
     },
     {
+      id: undefined,
       title: "Ediciones Limitadas",
       image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=600&h=800&auto=format&fit=crop",
     }
   ];
+
+  // Si hay vehículos de la base de datos, usamos los primeros 5
+  const cardData = vehiculos.length > 0 
+    ? vehiculos.slice(0, 5).map(v => ({
+        id: v.id,
+        title: `${v.marca} ${v.modelo}`,
+        image: v.urls_imagenes[0]
+      }))
+    : defaultCardData;
 
   return (
     <section aria-label="Vitrina de Vehículos" className="bg-surface relative overflow-hidden border-b border-border/75">
@@ -112,7 +132,11 @@ export default function Hero() {
                   <div className="flex">
                       {/* Duplicamos para asegurar el loop continuo */}
                       {[...cardData, ...cardData, ...cardData].map((card, index) => (
-                          <div key={index} className="w-48 md:w-56 mx-3 h-[18rem] md:h-[24rem] relative group hover:scale-95 transition-all duration-500 rounded-[2rem] overflow-hidden shadow-lg border border-border/50 bg-surface">
+                          <div 
+                            key={index} 
+                            onClick={() => card.id ? navigate(`/vehiculo/${card.id}`) : null}
+                            className={`w-48 md:w-56 mx-3 h-[18rem] md:h-[24rem] relative group hover:scale-95 transition-all duration-500 rounded-[2rem] overflow-hidden shadow-lg border border-border/50 bg-surface ${card.id ? 'cursor-pointer' : ''}`}
+                          >
                               <img src={card.image} alt={card.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                               <div className="flex items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-all duration-500 absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black/80 via-black/40 to-black/20 backdrop-blur-[2px]">
                                   <p className="text-white text-lg font-bold text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500 font-display shadow-black drop-shadow-lg leading-tight">{card.title}</p>

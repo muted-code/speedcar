@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <main className="bg-surface-alt min-h-screen pb-16">
-      <Hero />
+      <Hero vehiculos={vehiculos} />
       <LatestCreations vehiculos={vehiculos} />
     </main>
   );
