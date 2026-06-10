@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { Link } from 'react-router-dom';
+import type { Vehiculo } from '../types';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  vehiculos?: Vehiculo[];
 }
 
 export default function ChatWidget() {
@@ -54,7 +57,7 @@ export default function ChatWidget() {
 
       if (res.ok) {
         const data = await res.json();
-        setMessages(prev => [...prev, { role: 'assistant', content: data.respuesta }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: data.respuesta, vehiculos: data.vehiculos }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: 'Tuve un pequeño problema para conectarme, por favor intenta de nuevo.' }]);
       }
@@ -107,15 +110,43 @@ export default function ChatWidget() {
         <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-surface/50">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div 
-                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-primary text-white rounded-tr-sm' : 'bg-surface-alt border border-border text-text-main rounded-tl-sm'}`}
-              >
-                {msg.role === 'assistant' ? (
-                  <div className="prose prose-sm dark:prose-invert prose-p:my-1 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-ul:my-1 prose-li:my-0">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+              <div className="flex flex-col gap-2">
+                <div 
+                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${msg.role === 'user' ? 'bg-primary text-white rounded-tr-sm self-end' : 'bg-surface-alt border border-border text-text-main rounded-tl-sm self-start'}`}
+                >
+                  {msg.role === 'assistant' ? (
+                    <div className="prose prose-sm dark:prose-invert prose-p:my-1 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-ul:my-1 prose-li:my-0">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
+                </div>
+                
+                {msg.vehiculos && msg.vehiculos.length > 0 && (
+                  <div className="flex flex-col gap-2 mt-1 w-[85%]">
+                    {msg.vehiculos.map(v => (
+                      <Link 
+                        key={v.id} 
+                        to={`/vehiculo/${v.id}`}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center gap-3 bg-surface border border-border p-2 rounded-xl hover:border-primary/50 transition-colors group shadow-sm"
+                      >
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-alt">
+                          {v.urls_imagenes && v.urls_imagenes.length > 0 ? (
+                            <img src={v.urls_imagenes[0]} alt={v.modelo} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">Sin foto</div>
+                          )}
+                        </div>
+                        <div className="flex flex-col justify-center overflow-hidden">
+                          <p className="text-sm font-bold text-text-main truncate leading-tight group-hover:text-primary transition-colors">{v.marca} {v.modelo}</p>
+                          <p className="text-[11px] text-text-muted truncate mt-0.5">{v.año} • {v.kilometraje?.toLocaleString() || 0} km</p>
+                          <p className="text-xs font-bold text-primary mt-1">${(v.precio || 0).toLocaleString()} COP</p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                ) : (
-                  msg.content
                 )}
               </div>
             </div>
