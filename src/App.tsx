@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
+import ChatWidget from './components/ChatWidget';
 import Home from './pages/Home';
 
 // Carga diferida (Lazy Loading) para rutas pesadas
@@ -25,9 +26,10 @@ function App() {
             </Routes>
           </Suspense>
         </div>
-        <footer className="bg-surface border-t border-border mt-auto py-6 text-center text-text-muted text-sm">
+        <footer className="bg-surface border-t border-border mt-auto py-6 text-center text-text-muted text-sm relative z-40">
           © {new Date().getFullYear()} SPEED CAR · Portal de Vehículos Usados en Cali · Todos los derechos reservados.
         </footer>
+        <ChatWidget />
       </div>
     </Router>
   );
