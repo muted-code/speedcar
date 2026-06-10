@@ -35,11 +35,20 @@ export default function ChatWidget() {
 
     try {
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      
+      // Filtramos el mensaje de bienvenida inicial porque algunos modelos (Llama 3)
+      // fallan si el primer mensaje en el historial es de 'assistant' en lugar de 'user'.
+      const payloadMessages = [...messages, userMsg].filter(m => {
+        if (m.role === 'system') return false;
+        if (m.role === 'assistant' && m.content.includes('Soy tu asistente de Speed Car')) return false;
+        return true;
+      });
+
       const res = await fetch(`${BACKEND_URL}/api/ia/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMsg].filter(m => m.role !== 'system')
+          messages: payloadMessages
         })
       });
 
